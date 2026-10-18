@@ -1,0 +1,14 @@
+/*
+Theme Name: ELIO International Preschool
+Theme URI: https://example.com/elio
+Description: Theme for the ELIO International Preschool website: a home page built from editable block sections (Vietnamese and English via Polylang), a news blog and a tour-booking form that saves to Google Sheets.
+Author: ELIO
+Version: 1.0.0
+Requires at least: 6.5
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: elio
+*/
+
+/* The site's styles are in assets/css/elio.css (built from build/tailwind.css). */

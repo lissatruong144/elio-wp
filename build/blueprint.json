@@ -1,0 +1,20 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/",
+	"preferredVersions": { "php": "8.3", "wp": "latest" },
+	"features": { "networking": true },
+	"login": true,
+	"steps": [
+		{ "step": "setSiteOptions", "options": { "blogname": "ELIO International Preschool", "blogdescription": "Trường mầm non quốc tế ELIO tại Thảo Điền, TP.HCM", "permalink_structure": "/%postname%/" } },
+		{ "step": "installPlugin", "pluginData": { "resource": "wordpress.org/plugins", "slug": "polylang" } },
+		{ "step": "activateTheme", "themeFolderName": "elio" },
+		{
+			"step": "runPHP",
+			"code": "<?php define( 'WP_ADMIN', true ); require '/wordpress/wp-load.php'; require_once ABSPATH . 'wp-admin/includes/admin.php'; wp_set_current_user( 1 ); delete_transient( 'pll_activation_redirect' );$model = PLL()->model; $have = $model->get_languages_list( [ 'fields' => 'slug' ] ); foreach ( [ [ 'Tiếng Việt', 'vi', 'vi', 'vn' ], [ 'English', 'en', 'en_US', 'gb' ] ] as $i => $l ) { if ( in_array( $l[1], $have, true ) ) continue; $model->languages->add( [ 'name' => $l[0], 'slug' => $l[1], 'locale' => $l[2], 'rtl' => false, 'term_group' => $i, 'flag' => $l[3] ] ); }"
+		},
+		{
+			"step": "runPHP",
+			"code": "<?php define( 'WP_ADMIN', true ); require '/wordpress/wp-load.php'; require_once ABSPATH . 'wp-admin/includes/admin.php'; wp_set_current_user( 1 ); delete_transient( 'pll_activation_redirect' );elio_setup_demo();"
+		}
+	]
+}

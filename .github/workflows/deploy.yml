@@ -1,0 +1,54 @@
+# Push to main → build the Tailwind CSS → upload the theme folder (elio/) to the server over FTP.
+# Only changed files are sent (the action keeps a sync-state file on the server).
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   FTP_SERVER    e.g. ftp.totalab.io.vn  (or the hosting server name from DirectAdmin)
+#   FTP_USERNAME  an FTP account whose home is …/public_html/wp-content/themes/elio
+#   FTP_PASSWORD
+# Optional repository variable FTP_PROTOCOL: ftps (default) or ftp if the server has no TLS.
+name: Deploy theme
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "elio/**"
+      - "build/tailwind.css"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install build tools
+        run: npm ci --ignore-scripts
+
+      - name: Build CSS
+        run: npm run build
+
+      - name: Upload theme over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./elio/
+          server-dir: ./
+          exclude: |
+            **/_*
+            **/.DS_Store

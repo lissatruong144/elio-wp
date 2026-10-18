@@ -1,0 +1,7 @@
+node_modules/
+dist/
+tests/out/
+# Local test helpers inside the theme (never deployed)
+elio/_*
+.DS_Store
+Thumbs.db

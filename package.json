@@ -1,0 +1,16 @@
+{
+  "name": "elio-wp-build",
+  "private": true,
+  "description": "Build tools for the ELIO WordPress theme (not uploaded to the server).",
+  "scripts": {
+    "build": "tailwindcss -i build/tailwind.css -o elio/assets/css/elio.css --minify",
+    "watch": "tailwindcss -i build/tailwind.css -o elio/assets/css/elio.css --watch",
+    "zip": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File build/zip.ps1",
+    "preview": "npx -y @wp-playground/cli@latest server --port=9400 --blueprint=build/blueprint.json --mount-dir elio /wordpress/wp-content/themes/elio"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "puppeteer-core": "^24.43.1",
+    "tailwindcss": "4.3.3"
+  }
+}

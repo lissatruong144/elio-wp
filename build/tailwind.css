@@ -1,0 +1,418 @@
+/*
+ * Source for elio/assets/css/elio.css — run `npm run build` after changing classes.
+ *
+ * Utilities are !important: WordPress prints its own block styles without cascade layers,
+ * and unlayered rules beat Tailwind's layered ones regardless of specificity.
+ */
+@import "tailwindcss" source(none) important;
+
+@source "../elio/inc";
+@source "../elio/templates";
+@source "../elio/assets/js";
+/* Class names WordPress itself puts on posts and images (a sticky post gets "sticky", a
+   full-size image "size-full"): they must never turn into Tailwind utilities. */
+@source not inline("sticky static fixed size-full");
+
+@theme {
+  --font-sans: Montserrat, system-ui, sans-serif;
+
+  --color-forest: #0f3a2e;
+  --color-forest-deep: #0b2c23;
+  --color-forest-hover: #1b4c3e;
+  --color-gold: #c9a96a;
+  --color-gold-light: #e4cc94;
+  --color-gold-text: #a8823f;
+  --color-gold-label: #84652f;
+  --color-ivory: #faf7ee;
+  --color-cream: #f3eee2;
+  --color-paper: #fffdf7;
+  --color-placeholder: #e9e1cf;
+  --color-muted: #4f6b61;
+  --color-body: #2f4e44;
+  --color-sage: #8fa980;
+  --color-sage-pale: #edeee3;
+  --color-sage-tint: #dce6d6;
+  --color-butter: #f1e2bc;
+  --color-lilac: #e6e0f0;
+  --color-peach: #f4dccb;
+  --color-wheat: #f3e6c6;
+
+  --animate-nudge: nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    translate: 0;
+  }
+  50% {
+    translate: 6px;
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility text-pretty {
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------------ base (unlayered) */
+
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--color-ivory);
+  color: var(--color-forest);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: #9aa69f;
+}
+strong,
+b {
+  font-weight: 600;
+}
+
+/* WordPress' default block spacing, undone (the Tailwind classes set it instead). */
+.wp-site-blocks,
+.wp-site-blocks > *,
+.wp-block-group,
+.wp-block-post-content,
+.wp-block-image,
+.wp-block-image figure {
+  margin: 0;
+}
+.wp-site-blocks {
+  padding: 0;
+}
+.wp-block-image img {
+  vertical-align: middle;
+}
+.wp-block-group {
+  box-sizing: border-box;
+}
+mark.has-inline-color {
+  background: none;
+}
+
+/* Interactive sections: the editable lists are replaced by the built UI once the script runs. */
+.js :is(.elio-why, .elio-day, .elio-campus, .elio-edu):not(.is-failed) > :is(.elio-why-item, .elio-day-stop, .elio-campus-item, .elio-edu-item) {
+  display: none;
+}
+
+/* --------------------------------------------------------------------- components */
+
+.elio-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--color-gold-label);
+}
+.elio-kicker::before {
+  content: "";
+  flex-shrink: 0;
+  width: 28px;
+  height: 1.5px;
+  background: var(--color-gold);
+}
+.elio-kicker.is-light {
+  color: var(--color-gold-light);
+}
+@media (width >= 40rem) {
+  .elio-kicker {
+    font-size: 12px;
+  }
+}
+
+.elio-pill a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.elio-pill.is-dark a {
+  background: var(--color-forest);
+  color: var(--color-ivory);
+}
+.elio-pill.is-dark a:hover {
+  background: var(--color-forest-hover);
+}
+.elio-pill.is-ivory a {
+  background: var(--color-ivory);
+  color: var(--color-forest);
+}
+.elio-pill.is-ivory a:hover {
+  background: var(--color-gold-light);
+}
+.elio-pill.is-ghost-light a {
+  border: 1px solid rgb(250 247 238 / 0.5);
+  color: var(--color-ivory);
+}
+.elio-pill.is-ghost-light a:hover {
+  border-color: var(--color-ivory);
+  background: rgb(250 247 238 / 0.1);
+}
+
+.elio-check::before {
+  content: "✓";
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  font-size: 10px;
+  background: var(--color-sage-tint);
+  color: var(--color-forest);
+}
+.elio-check.is-lit::before {
+  background: var(--color-gold-text);
+  color: var(--color-paper);
+}
+
+/* ---------------------------------------------------------------- news / blog cards */
+
+.elio-cards {
+  display: grid;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (width >= 48rem) {
+  .elio-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+.elio-cards > li {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid rgb(15 58 46 / 0.1);
+  border-radius: 24px;
+  background: var(--color-paper);
+  transition: translate 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+@media (hover: hover) {
+  .elio-cards > li:hover {
+    translate: 0 -4px;
+    box-shadow: 0 22px 40px rgb(15 58 46 / 0.12);
+  }
+}
+.elio-card-img {
+  margin: 0;
+  background: var(--color-placeholder);
+}
+.elio-card-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.elio-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 24px 26px;
+}
+.elio-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-gold-label);
+}
+.elio-card-meta .wp-block-post-terms a:hover {
+  color: var(--color-gold-text);
+}
+.elio-card-meta .wp-block-post-date {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.elio-card-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.elio-card-title a:hover {
+  color: var(--color-gold-text);
+}
+.elio-card-excerpt,
+.elio-card-excerpt p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+.elio-card-excerpt .wp-block-post-excerpt__more-text {
+  display: none;
+}
+
+.wp-block-query-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.wp-block-query-pagination-numbers {
+  display: flex;
+  gap: 6px;
+}
+.wp-block-query-pagination a,
+.wp-block-query-pagination .page-numbers {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgb(15 58 46 / 0.2);
+  border-radius: 9999px;
+}
+.wp-block-query-pagination .page-numbers.current {
+  border-color: var(--color-forest);
+  background: var(--color-forest);
+  color: var(--color-ivory);
+}
+.wp-block-query-pagination .page-numbers.dots {
+  border: 0;
+}
+
+/* --------------------------------------------------------------- article body text */
+
+.elio-prose {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--color-body);
+}
+.elio-prose > * + * {
+  margin-top: 1.15em;
+}
+.elio-prose :is(h2, h3, h4) {
+  color: var(--color-forest);
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+.elio-prose h2 {
+  margin-top: 1.8em;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+.elio-prose h3 {
+  margin-top: 1.6em;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.elio-prose h4 {
+  margin-top: 1.4em;
+  font-size: 18px;
+  font-weight: 600;
+}
+.elio-prose a {
+  color: var(--color-gold-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.elio-prose :is(ul, ol) {
+  padding-left: 1.4em;
+}
+.elio-prose ul {
+  list-style: disc;
+}
+.elio-prose ol {
+  list-style: decimal;
+}
+.elio-prose li + li {
+  margin-top: 0.4em;
+}
+.elio-prose li::marker {
+  color: var(--color-gold-text);
+}
+.elio-prose blockquote {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 22px;
+  border-left: 3px solid var(--color-gold);
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--color-forest);
+}
+.elio-prose img {
+  border-radius: 20px;
+}
+.elio-prose figcaption {
+  margin-top: 10px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--color-muted);
+}
+.elio-prose hr {
+  border: 0;
+  border-top: 1px solid rgb(15 58 46 / 0.14);
+}
+.elio-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.elio-prose :is(th, td) {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgb(15 58 46 / 0.14);
+  text-align: left;
+}
+.elio-prose .wp-block-button__link {
+  display: inline-flex;
+  padding: 14px 24px;
+  border-radius: 9999px;
+  background: var(--color-forest);
+  color: var(--color-ivory);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}

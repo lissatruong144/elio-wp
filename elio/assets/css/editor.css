@@ -1,0 +1,88 @@
+/*
+ * Block editor only. The interactive home sections are edited as lists (one group per item);
+ * on the site, assets/js/elio.js turns them into tabs, sliders and the timeline. Here they are
+ * shown as plain cards so each item is easy to find, edit or duplicate.
+ */
+
+:is(.elio-why, .elio-day, .elio-campus, .elio-edu) {
+	display: grid !important;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 16px;
+	padding: 44px 16px 16px !important;
+	border: 2px dashed rgb(201 169 106 / 0.6);
+	border-radius: 20px;
+	position: relative;
+}
+:is(.elio-why, .elio-day, .elio-campus, .elio-edu)::before {
+	position: absolute;
+	top: 12px;
+	left: 16px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: #84652f;
+}
+.elio-why::before { content: "Why ELIO – mỗi thẻ là một trụ cột (nhân bản thẻ để thêm)"; }
+.elio-day::before { content: "Một ngày tại ELIO – mỗi thẻ là một mốc giờ (nhân bản thẻ để thêm)"; }
+.elio-campus::before { content: "Không gian – mỗi thẻ là một khu vực (nhân bản thẻ để thêm)"; }
+.elio-edu::before { content: "Giáo viên – mỗi thẻ là một người (nhân bản thẻ để thêm; thêm class “is-he” nếu là thầy)"; }
+
+:is(.elio-why-item, .elio-day-stop, .elio-campus-item, .elio-edu-item) {
+	display: flex !important;
+	flex-direction: column;
+	gap: 8px;
+	padding: 14px;
+	border: 1px solid rgb(15 58 46 / 0.14);
+	border-radius: 16px;
+	background: #fffdf7;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #2f4e44;
+}
+:is(.elio-day-img, .elio-campus-img, .elio-edu-img) img {
+	width: 100% !important;
+	height: 150px !important;
+	object-fit: cover;
+	border-radius: 10px;
+}
+.elio-why-icon img {
+	width: 44px !important;
+	height: 44px !important;
+}
+:is(.elio-why-n, .elio-why-en, .elio-day-time, .elio-campus-n, .elio-campus-en, .elio-edu-n, .elio-edu-role) {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	color: #84652f;
+}
+.elio-day-part {
+	align-self: flex-start;
+	padding: 4px 12px;
+	border-radius: 9999px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	color: #0f3a2e;
+}
+:is(.elio-why-title, .elio-day-name, .elio-campus-title, .elio-edu-name) {
+	font-size: 17px !important;
+	font-weight: 600;
+	line-height: 1.3;
+	color: #0f3a2e;
+}
+:is(.elio-why-key, .elio-edu-belief) {
+	font-style: italic;
+	color: #0f3a2e;
+}
+.elio-edu-brings {
+	display: flex !important;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+.elio-edu-chip {
+	padding: 4px 10px;
+	border-radius: 9999px;
+	background: #edeee3;
+	font-size: 12px;
+	font-weight: 500;
+}
