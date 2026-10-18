@@ -67,6 +67,8 @@ html {
   scroll-behavior: smooth;
 }
 body {
+  /* Full-bleed sections (the desktop hero) reach past the 1280px page frame; nothing scrolls sideways. */
+  overflow-x: clip;
   margin: 0;
   background: var(--color-ivory);
   color: var(--color-forest);
@@ -115,6 +117,39 @@ mark.has-inline-color {
 /* Interactive sections: the editable lists are replaced by the built UI once the script runs. */
 .js :is(.elio-why, .elio-day, .elio-campus, .elio-edu):not(.is-failed) > :is(.elio-why-item, .elio-day-stop, .elio-campus-item, .elio-edu-item) {
   display: none;
+}
+
+/*
+ * Desktop hero: the photo runs edge to edge across the browser while its text, buttons and
+ * badge stay aligned with the 1280px page frame (logo, menu). --elio-sb is the scrollbar
+ * width, set by elio.js, so the photo ends exactly at the scrollbar instead of under it.
+ * In @layer base on purpose: these !important rules must beat the hero block's own
+ * !important utilities (lg:mx-0, lg:px-14, lg:right-14), and for !important declarations an
+ * earlier layer wins over a later one (and any layer over unlayered CSS).
+ */
+@layer base {
+@media (width >= 64rem) {
+  .elio-home > #top {
+    --bleed: max(0px, calc((100vw - var(--elio-sb, 0px) - 1280px) / 2));
+    width: calc(100% + 2 * var(--bleed)) !important;
+    max-width: none !important;
+    margin-left: calc(-1 * var(--bleed)) !important;
+    margin-right: calc(-1 * var(--bleed)) !important;
+  }
+  .elio-home > #top > .wp-block-group:last-child {
+    padding-left: calc(var(--bleed) + 56px) !important;
+    padding-right: calc(var(--bleed) + 56px) !important;
+  }
+  .elio-home > #top .lg\:right-14 {
+    right: calc(var(--bleed) + 56px) !important;
+  }
+}
+/* Very wide screens crop the photo hard top and bottom: frame the faces, not the table. */
+@media (width >= 100rem) {
+  .elio-home > #top > .wp-block-group:first-child img {
+    object-position: 50% 72% !important;
+  }
+}
 }
 
 /* --------------------------------------------------------------------- components */

@@ -1,29 +1,35 @@
-// Ad-hoc investigation of NV-07 (logo on a post) and FO-03 (footer quick links).
+// Which rule sets #top's margin-left on the live site (with the new CSS injected)?
 import puppeteer from "puppeteer-core";
-const BASE = "http://127.0.0.1:9400";
+import fs from "fs";
+const css = fs.readFileSync("D:/ELIO/elio-wp/elio/assets/css/elio.css", "utf8");
 const browser = await puppeteer.launch({ executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: true, args: ["--no-proxy-server"] });
-const ctx = await browser.createBrowserContext();
-const p = await ctx.newPage();
-p.setDefaultTimeout(120000);
-await p.setCookie({ name: "playground_auto_login_already_happened", value: "1", url: BASE });
-await p.setViewport({ width: 1440, height: 900 });
-
-const posts = await (await fetch(BASE + "/wp-json/wp/v2/posts?per_page=20&_fields=link", { headers: { Cookie: "playground_auto_login_already_happened=1" } })).json();
-console.log("posts:", posts.map((x) => x.link.replace(BASE, "")).join(" "));
-const vi = posts.find((x) => !x.link.includes("/en/"));
-await p.goto(vi.link, { waitUntil: "load", timeout: 180000 });
-console.log("post", vi.link.replace(BASE, ""), "logo:", await p.$eval("header > a", (a) => a.getAttribute("href")), "lang:", await p.$eval("html", (h) => h.lang));
-
-await p.goto(BASE + "/", { waitUntil: "load", timeout: 180000 });
-await p.addStyleTag({ content: "html{scroll-behavior:auto!important}" });
-const links = await p.$$eval("footer a", (as) => as.filter((a) => a.textContent.trim().startsWith("→")).map((a) => a.getAttribute("href")));
-for (const href of links) {
-	await p.evaluate(() => scrollTo(0, 0));
-	const before = await p.evaluate(() => [location.hash, scrollY]);
-	await p.$eval(`footer a[href="${href}"]`, (a) => a.click());
-	await new Promise((r) => setTimeout(r, 700));
-	const id = href.split("#")[1];
-	const after = await p.evaluate((id) => [location.hash, Math.round(scrollY), Math.round(document.getElementById(id).getBoundingClientRect().top)], id);
-	console.log(href.replace(BASE, ""), "before", before, "after", after);
-}
+const p = await browser.newPage();
+await p.setViewport({ width: 1920, height: 1080 });
+await p.goto("https://totalab.io.vn/?nocache=" + Date.now(), { waitUntil: "load", timeout: 120000 });
+const out = await p.evaluate((css) => {
+	document.querySelectorAll('link[id="elio-css"]').forEach((l) => l.remove());
+	const s = document.createElement("style");
+	s.textContent = css;
+	document.head.appendChild(s);
+	const top = document.getElementById("top");
+	const cs = getComputedStyle(top);
+	const parent = top.parentElement;
+	// Every stylesheet rule that matches #top and touches margin.
+	const hits = [];
+	for (const sh of document.styleSheets) {
+		let rules;
+		try { rules = sh.cssRules; } catch (e) { continue; }
+		const walk = (list) => {
+			for (const r of list) {
+				if (r.cssRules && !r.selectorText) walk(r.cssRules);
+				else if (r.selectorText && /margin/.test(r.cssText)) {
+					try { if (top.matches(r.selectorText)) hits.push(r.cssText.slice(0, 220)); } catch (e) {}
+				}
+			}
+		};
+		walk(rules);
+	}
+	return { marginLeft: cs.marginLeft, bleed: cs.getPropertyValue("--bleed"), parent: parent.className, parentDisplay: getComputedStyle(parent).display, hits };
+}, css);
+console.log(JSON.stringify(out, null, 1));
 await browser.close();

@@ -658,6 +658,13 @@
 
 	/* ------------------------------------------------------------------- boot */
 
+	// Scrollbar width, used by the CSS that lets the desktop hero run edge to edge.
+	function scrollbar() {
+		document.documentElement.style.setProperty("--elio-sb", window.innerWidth - document.documentElement.clientWidth + "px");
+	}
+	scrollbar();
+	window.addEventListener("resize", scrollbar);
+
 	function each(sel, fn) {
 		Array.prototype.forEach.call(document.querySelectorAll(sel), function (n) {
 			try {
