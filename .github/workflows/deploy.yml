@@ -2,10 +2,13 @@
 # Only changed files are sent (the action keeps a sync-state file on the server).
 #
 # Repository secrets (Settings → Secrets and variables → Actions):
-#   FTP_SERVER    e.g. ftp.totalab.io.vn  (or the hosting server name from DirectAdmin)
-#   FTP_USERNAME  an FTP account whose home is …/public_html/wp-content/themes/elio
+#   FTP_SERVER    onehost-wphn072607.000nethost.com  (1Panel → Tài khoản FTP → Host)
+#   FTP_USERNAME  ppffqmeqhosting_elio_deploy        (home: /home/ppffqmeqhosting/public_html)
 #   FTP_PASSWORD
-# Optional repository variable FTP_PROTOCOL: ftps (default) or ftp if the server has no TLS.
+# Optional repository variables:
+#   FTP_PROTOCOL  ftps (default) or ftp if the server has no TLS
+#   FTP_DIR       theme folder relative to the FTP account's home (default wp-content/themes/elio/;
+#                 use ./ if the account's home is the theme folder itself)
 name: Deploy theme
 
 on:
@@ -48,7 +51,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
           local-dir: ./elio/
-          server-dir: ./
+          server-dir: ${{ vars.FTP_DIR || 'wp-content/themes/elio/' }}
           exclude: |
             **/_*
             **/.DS_Store

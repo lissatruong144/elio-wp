@@ -50,8 +50,8 @@ Yêu cầu: WordPress 6.5 trở lên, PHP 7.4 trở lên. Không cần Node.js t
 Push lên nhánh `main` → GitHub Actions (`.github/workflows/deploy.yml`) build CSS rồi upload thư mục `elio/` lên hosting qua FTP. Chỉ file thay đổi được gửi lên. Nội dung trang/bài viết trên WordPress không bị ảnh hưởng.
 
 Cài đặt một lần:
-1. DirectAdmin → **FTP Management** → tạo tài khoản FTP, thư mục gốc `domains/totalab.io.vn/public_html/wp-content/themes/elio`.
-2. GitHub → repo → **Settings → Secrets and variables → Actions** → thêm `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`. Nếu hosting không hỗ trợ FTPS, thêm biến (tab Variables) `FTP_PROTOCOL` = `ftp`.
+1. 1Panel → **Tài khoản FTP**: tài khoản `ppffqmeqhosting_elio_deploy`, thư mục `/home/ppffqmeqhosting/public_html` (workflow tự upload vào `wp-content/themes/elio/` bên trong).
+2. GitHub → repo → **Settings → Secrets and variables → Actions** → thêm `FTP_SERVER` (`onehost-wphn072607.000nethost.com`), `FTP_USERNAME`, `FTP_PASSWORD`. Nếu hosting không hỗ trợ FTPS, thêm biến (tab Variables) `FTP_PROTOCOL` = `ftp`.
 
 Hằng ngày: sửa trong VS Code → (thử bằng `npm run preview`) → commit + push → xem tab **Actions** trên GitHub → wp-admin **LiteSpeed Cache → Purge All**.
 
