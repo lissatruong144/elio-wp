@@ -45,6 +45,16 @@ Yêu cầu: WordPress 6.5 trở lên, PHP 7.4 trở lên. Không cần Node.js t
 - **Menu**: Appearance → Menus. Mỗi ngôn ngữ có một menu riêng: “Menu chính (VI)” và “Main menu (EN)”. Link đến từng phần của trang chủ có dạng `https://ten-mien/#why`, `#approach`, `#campus`, `#tuition`, `#parents`, `#tour`, `#news`.
 - **Trang mới có giao diện rộng** (dùng các section như trang chủ): khi tạo trang, chọn Template → “Trang rộng”.
 
+## Sửa code và tự deploy qua GitHub
+
+Push lên nhánh `main` → GitHub Actions (`.github/workflows/deploy.yml`) build CSS rồi upload thư mục `elio/` lên hosting qua FTP. Chỉ file thay đổi được gửi lên. Nội dung trang/bài viết trên WordPress không bị ảnh hưởng.
+
+Cài đặt một lần:
+1. DirectAdmin → **FTP Management** → tạo tài khoản FTP, thư mục gốc `domains/totalab.io.vn/public_html/wp-content/themes/elio`.
+2. GitHub → repo → **Settings → Secrets and variables → Actions** → thêm `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`. Nếu hosting không hỗ trợ FTPS, thêm biến (tab Variables) `FTP_PROTOCOL` = `ftp`.
+
+Hằng ngày: sửa trong VS Code → (thử bằng `npm run preview`) → commit + push → xem tab **Actions** trên GitHub → wp-admin **LiteSpeed Cache → Purge All**.
+
 ## Phát triển
 
 ```bash
