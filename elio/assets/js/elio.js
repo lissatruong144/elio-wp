@@ -101,45 +101,133 @@
 
 	/* ----------------------------------------------------------------- header */
 
-	function header(root) {
-		var lang = root.querySelector("[data-elio-lang]");
-		var menuBtn = root.querySelector("[data-elio-menu]");
+	/** The menu button + panel pair used by the header and the floating nav. Returns setMenu(open). */
+	function menu(root) {
+		var btn = root.querySelector("[data-elio-menu]");
 		var panel = root.querySelector("[data-elio-menu-panel]");
-		var langBtn = lang && lang.querySelector("button");
-		var langPop = lang && lang.querySelector("div[hidden], div:last-child");
-
-		function setLang(open) {
-			if (!lang) return;
-			langPop.hidden = !open;
-			langBtn.setAttribute("aria-expanded", String(open));
-		}
 		function setMenu(open) {
-			if (!menuBtn) return;
+			if (!btn) return;
 			panel.hidden = !open;
-			menuBtn.setAttribute("aria-expanded", String(open));
-			menuBtn.setAttribute("aria-label", menuBtn.getAttribute(open ? "data-label-close" : "data-label-open"));
+			btn.setAttribute("aria-expanded", String(open));
+			btn.setAttribute("aria-label", btn.getAttribute(open ? "data-label-close" : "data-label-open"));
 		}
-		if (langBtn)
-			langBtn.addEventListener("click", function () {
-				setLang(langPop.hidden);
-			});
-		if (menuBtn)
-			menuBtn.addEventListener("click", function () {
+		if (btn)
+			btn.addEventListener("click", function () {
 				setMenu(panel.hidden);
 			});
 		if (panel)
 			panel.addEventListener("click", function (e) {
 				if (e.target.closest("a")) setMenu(false);
 			});
+		document.addEventListener("keydown", function (e) {
+			if (e.key === "Escape") setMenu(false);
+		});
+		return setMenu;
+	}
+
+	function header(root) {
+		var lang = root.querySelector("[data-elio-lang]");
+		var langBtn = lang && lang.querySelector("button");
+		var langPop = lang && lang.querySelector("div[hidden], div:last-child");
+		menu(root);
+
+		function setLang(open) {
+			if (!lang) return;
+			langPop.hidden = !open;
+			langBtn.setAttribute("aria-expanded", String(open));
+		}
+		if (langBtn)
+			langBtn.addEventListener("click", function () {
+				setLang(langPop.hidden);
+			});
 		document.addEventListener("pointerdown", function (e) {
 			if (lang && !lang.contains(e.target)) setLang(false);
 		});
 		document.addEventListener("keydown", function (e) {
-			if (e.key === "Escape") {
-				setLang(false);
-				setMenu(false);
-			}
+			if (e.key === "Escape") setLang(false);
 		});
+	}
+
+	/* ------------------------------------------------------------ floating nav */
+
+	/**
+	 * A round button that appears once the header has scrolled out of view and leaves when the
+	 * header is back. Its menu opens on click, and also on hover where there is a mouse.
+	 * Links to sections of this page are marked aria-current while that section is on screen.
+	 */
+	function bubble(root) {
+		var head = document.querySelector("[data-elio-header]");
+		if (!head || !window.IntersectionObserver) return;
+		var btn = root.querySelector("[data-elio-menu]");
+		var panel = root.querySelector("[data-elio-menu-panel]");
+
+		if (window.matchMedia("(hover: hover)").matches) {
+			var hovering = false;
+			var timer;
+			// Registered before menu()'s toggle: a click on a menu that hovering already opened keeps it open.
+			btn.addEventListener("click", function (e) {
+				if (hovering && !panel.hidden) e.stopImmediatePropagation();
+			});
+			root.addEventListener("mouseenter", function () {
+				hovering = true;
+				clearTimeout(timer);
+				setMenu(true);
+			});
+			// The delay lets the pointer cross the gap between the button and the menu.
+			root.addEventListener("mouseleave", function () {
+				hovering = false;
+				timer = setTimeout(function () {
+					setMenu(false);
+				}, 250);
+			});
+		}
+		var setMenu = menu(root);
+
+		new IntersectionObserver(function (entries) {
+			var e = entries[entries.length - 1];
+			var show = !e.isIntersecting && e.boundingClientRect.top < 0;
+			root.classList.toggle("is-shown", show);
+			if (!show) setMenu(false);
+		}).observe(head);
+
+		document.addEventListener("pointerdown", function (e) {
+			if (!root.contains(e.target)) setMenu(false);
+		});
+
+		var links = Array.prototype.filter.call(root.querySelectorAll("nav a"), function (a) {
+			return a.hash && a.pathname === location.pathname && document.getElementById(a.hash.slice(1));
+		});
+		if (!links.length) return;
+		var ticking = false;
+		function spy() {
+			ticking = false;
+			var line = window.innerHeight * 0.35;
+			// The section starting closest above the line wins, whatever order the menu is in.
+			var current = "";
+			var best = -Infinity;
+			links.forEach(function (a) {
+				var top = document.getElementById(a.hash.slice(1)).getBoundingClientRect().top;
+				if (top <= line && top > best) {
+					best = top;
+					current = a.hash;
+				}
+			});
+			links.forEach(function (a) {
+				if (a.hash === current) a.setAttribute("aria-current", "location");
+				else a.removeAttribute("aria-current");
+			});
+		}
+		window.addEventListener(
+			"scroll",
+			function () {
+				if (!ticking) {
+					ticking = true;
+					requestAnimationFrame(spy);
+				}
+			},
+			{ passive: true }
+		);
+		spy();
 	}
 
 	/* -------------------------------------------------------------- why ELIO */
@@ -677,6 +765,7 @@
 		});
 	}
 	each("[data-elio-header]", header);
+	each("[data-elio-bubble]", bubble);
 	each(".elio-why", why);
 	each(".elio-day", day);
 	each(".elio-campus", campus);

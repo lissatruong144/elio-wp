@@ -129,6 +129,21 @@ function elio_render_header() {
 			<span class="elio-pill is-dark mt-5 block sm:hidden [&_a]:w-full [&_a]:px-5 [&_a]:py-4"><a href="<?php echo esc_url( $tour ); ?>"><?php echo esc_html( elio_t( 'navCta' ) ); ?></a></span>
 		</div>
 	</header>
+
+	<?php // Floating nav button: shown once the header has scrolled out of view; opens the menu on click or hover (elio.js). ?>
+	<div class="elio-bubble" data-elio-bubble>
+		<div hidden data-elio-menu-panel class="absolute bottom-[calc(100%+10px)] left-0 w-[min(280px,calc(100vw-32px))] rounded-2xl border border-forest/12 bg-ivory p-2 shadow-[0_18px_30px_rgba(15,58,46,.14)]">
+			<nav class="flex flex-col" aria-label="<?php echo esc_attr( 'en' === elio_lang() ? 'Main' : 'Chính' ); ?>">
+				<?php foreach ( $nav as $n ) : ?>
+					<a href="<?php echo esc_url( $n[1] ); ?>" class="rounded-xl px-4 py-3 text-base font-medium text-forest hover:bg-cream aria-[current=location]:bg-cream aria-[current=location]:text-gold-label"><?php echo esc_html( $n[0] ); ?></a>
+				<?php endforeach; ?>
+			</nav>
+			<span class="elio-pill is-dark mt-2 block [&_a]:w-full [&_a]:px-5 [&_a]:py-3.5"><a href="<?php echo esc_url( $tour ); ?>"><?php echo esc_html( elio_t( 'navCta' ) ); ?></a></span>
+		</div>
+		<button type="button" data-elio-menu aria-expanded="false" aria-label="<?php echo esc_attr( elio_t( 'menuOpen' ) ); ?>" data-label-open="<?php echo esc_attr( elio_t( 'menuOpen' ) ); ?>" data-label-close="<?php echo esc_attr( elio_t( 'menuClose' ) ); ?>" class="flex size-12 cursor-pointer items-center justify-center rounded-full border-0 bg-forest text-ivory shadow-[0_10px_24px_rgba(15,58,46,.28)] hover:bg-forest-hover md:size-14">
+			<?php echo elio_icon( 'list', 'size-6 [[aria-expanded=true]>&]:hidden' ) . elio_icon( 'x', 'hidden size-6 [[aria-expanded=true]>&]:block' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+		</button>
+	</div>
 	<?php
 	return ob_get_clean();
 }

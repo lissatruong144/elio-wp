@@ -179,6 +179,36 @@ mark.has-inline-color {
   }
 }
 
+/* Floating nav (elio.js toggles .is-shown). `fixed` is kept out of the utilities, so it lives here. */
+.elio-bubble {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.8);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s, visibility 0s 0.3s;
+}
+.elio-bubble.is-shown {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s;
+}
+@media (width >= 48rem) {
+  .elio-bubble {
+    bottom: 24px;
+    left: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .elio-bubble,
+  .elio-bubble.is-shown {
+    transition: none;
+  }
+}
+
 .elio-pill a {
   display: inline-flex;
   align-items: center;
