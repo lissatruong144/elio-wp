@@ -1,5 +1,7 @@
 # ELIO – theme WordPress
 
+**[▶ Xem demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/lissatruong144/elio-wp/main/playground.json)**: WordPress chạy ngay trong trình duyệt qua WordPress Playground, có sẵn theme lấy từ nhánh `main`, Polylang và nội dung mẫu. Không cần hosting. Lần đầu mở mất khoảng 10–30 giây; dữ liệu mất khi đóng tab.
+
 Theme WordPress cho website ELIO International Preschool, chuyển từ bản Next.js (`../elio-web`) và giữ nguyên thiết kế. Khách tự sửa nội dung trong trình soạn thảo Gutenberg. Website có hai ngôn ngữ Việt/Anh qua Polylang, có trang Tin tức, và form đặt lịch tham quan ghi vào Google Sheet (dùng chung `Code.gs` với bản cũ).
 
 ```
@@ -15,6 +17,7 @@ elio-wp/
 │   ├── tailwind.css      ← nguồn của elio.css
 │   ├── blueprint.json    ← dựng WordPress thử trên máy
 │   └── zip.ps1
+├── playground.json       ← blueprint cho link demo (cài theme từ GitHub)
 └── dist/elio-theme.zip   ← file để tải lên WordPress
 ```
 
@@ -29,7 +32,7 @@ Yêu cầu: WordPress 6.5 trở lên, PHP 7.4 trở lên. Không cần Node.js t
 4. **Tạo nội dung**: Settings → **ELIO** → bấm **Tạo nội dung mẫu**. Nút này tạo trang chủ VI/EN, trang Tin tức/News, menu, chuyên mục và 3 bài mẫu cho mỗi ngôn ngữ. Nó cũng đặt trang chủ làm trang đầu và bật đường dẫn đẹp. Chạy lại nhiều lần cũng không tạo trùng.
 5. **Nối form với Google Sheet**: vẫn ở Settings → ELIO, mục 2:
    - *Web app URL*: link `/exec` của Apps Script (chính là `GOOGLE_SHEET_WEBHOOK_URL` trong `elio-web/.env.local`).
-   - *SECRET*: giá trị `SECRET` trong `elio-web/google-apps-script/Code.paste-me.gs` (trùng `GOOGLE_SHEET_SECRET` trong `.env.local`).
+   - *SECRET*: giá trị `GOOGLE_SHEET_SECRET` trong `elio-web/.env.local` (trùng `SECRET` đã điền trong Apps Script).
    - Có thể khai báo trong `wp-config.php` thay vì nhập vào trang cài đặt: `define( 'ELIO_SHEET_WEBHOOK_URL', '…' );` và `define( 'ELIO_SHEET_SECRET', '…' );`.
 6. **Thông tin liên hệ và mạng xã hội** (footer): Settings → ELIO, mục 3–4.
 7. **Khẩu hiệu tiếng Anh**: Languages → Translations → dịch “Tagline” (dòng mô tả site).
@@ -45,15 +48,13 @@ Yêu cầu: WordPress 6.5 trở lên, PHP 7.4 trở lên. Không cần Node.js t
 - **Menu**: Appearance → Menus. Mỗi ngôn ngữ có một menu riêng: “Menu chính (VI)” và “Main menu (EN)”. Link đến từng phần của trang chủ có dạng `https://ten-mien/#why`, `#approach`, `#campus`, `#tuition`, `#parents`, `#tour`, `#news`.
 - **Trang mới có giao diện rộng** (dùng các section như trang chủ): khi tạo trang, chọn Template → “Trang rộng”.
 
-## Sửa code và tự deploy qua GitHub
+## Deploy qua GitHub (chạy tay)
 
-Push lên nhánh `main` → GitHub Actions (`.github/workflows/deploy.yml`) build CSS rồi upload thư mục `elio/` lên hosting qua FTP. Chỉ file thay đổi được gửi lên. Nội dung trang/bài viết trên WordPress không bị ảnh hưởng.
+Deploy **không** tự chạy khi push. Muốn đưa code lên hosting: GitHub → tab **Actions** → **Deploy theme** → **Run workflow**. Workflow (`.github/workflows/deploy.yml`) build CSS rồi upload thư mục `elio/` lên hosting qua FTP. Chỉ file thay đổi được gửi lên. Nội dung trang/bài viết trên WordPress không bị ảnh hưởng.
 
-Cài đặt một lần:
-1. 1Panel → **Tài khoản FTP**: tài khoản `ppffqmeqhosting_elio_deploy`, thư mục `/home/ppffqmeqhosting/public_html` (workflow tự upload vào `wp-content/themes/elio/` bên trong).
-2. GitHub → repo → **Settings → Secrets and variables → Actions** → thêm `FTP_SERVER` (`onehost-wphn072607.000nethost.com`), `FTP_USERNAME`, `FTP_PASSWORD`. Nếu hosting không hỗ trợ FTPS, thêm biến (tab Variables) `FTP_PROTOCOL` = `ftp`.
+Cài đặt một lần: GitHub → repo → **Settings → Secrets and variables → Actions** → thêm `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD` (lấy trong trang quản lý hosting → Tài khoản FTP). Nếu hosting không hỗ trợ FTPS, thêm biến (tab Variables) `FTP_PROTOCOL` = `ftp`.
 
-Hằng ngày: sửa trong VS Code → (thử bằng `npm run preview`) → commit + push → xem tab **Actions** trên GitHub → wp-admin **LiteSpeed Cache → Purge All**.
+Hằng ngày: sửa trong VS Code → (thử bằng `npm run preview`) → commit + push → khi muốn cập nhật web thật thì Run workflow → wp-admin **LiteSpeed Cache → Purge All**.
 
 ## Phát triển
 

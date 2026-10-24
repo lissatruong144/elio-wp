@@ -1,9 +1,10 @@
-# Push to main → build the Tailwind CSS → upload the theme folder (elio/) to the server over FTP.
+# Manual only (Actions → Deploy theme → Run workflow): build the Tailwind CSS → upload the theme
+# folder (elio/) to the server over FTP. Pushing does NOT deploy.
 # Only changed files are sent (the action keeps a sync-state file on the server).
 #
 # Repository secrets (Settings → Secrets and variables → Actions):
-#   FTP_SERVER    onehost-wphn072607.000nethost.com  (1Panel → Tài khoản FTP → Host)
-#   FTP_USERNAME  ppffqmeqhosting_elio_deploy        (home: /home/ppffqmeqhosting/public_html)
+#   FTP_SERVER    (hosting panel → Tài khoản FTP → Host)
+#   FTP_USERNAME
 #   FTP_PASSWORD
 # Optional repository variables:
 #   FTP_PROTOCOL  ftps (default) or ftp if the server has no TLS
@@ -12,14 +13,6 @@
 name: Deploy theme
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "elio/**"
-      - "build/tailwind.css"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
 concurrency:
